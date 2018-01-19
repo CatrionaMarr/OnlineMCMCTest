@@ -199,7 +199,7 @@ On this website you can input a model function defined by a set of parameters in
       <p>
         While full instructions and explanations can be found <a href="#instructions">here</a>, the following video showing how to use the website might also be useful. In this case a basic linear model and a small data set were used for simplicity.
       </p>
-      <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/8VenOZfNJPU" allowfullscreen></iframe>
+      <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/qFPMwbsvMzc" allowfullscreen></iframe>
     </div>
   </div>
 </div>
