@@ -565,6 +565,28 @@ errval = 0\n\
       }
     }
 
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------CATS TEST AREA-----------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------------------------
+
+// generate a unique output directory for the file and data
+var outdir = guuid();
+// object to output the data
+var outputdata = {};
+outputdata['outdir'] = outdir;
+var catstestfile = "catstestfile.txt"
+var sampler_type = $("#sampler_type").val();
+var likelihood_input_type = $("#likelihood_input_type").val();
+var 
+
+// create python file for submission (use format function defined at the start of the code)
+outputdata['catstestfile'] = sampler_type.format(sampler_type);
+ 
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------CATS TEST AREA-----------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------------------------
+
+
     // write model function
     var modelfunction = "# import functions that can be used by the model\n\
 from numpy import pi, sin, cos, tan, exp, log, log10, log2, arccos, arcsin, arctan, arctan2, sinh, cosh, tanh, arccosh, arcsinh, arctanh\n\
@@ -728,12 +750,14 @@ def mymodel({arguments}):\n\
 
     outputStrings['likefunction'] = likefunction;
 
+/*
     // generate a unique output directory for the file and data
     var outdir = guuid();
 
     // object to output the data
     var outputdata = {};
     outputdata['outdir'] = outdir;
+*/
 
     // get abscissa data
     if( $("#id_abscissa_"+abscissavar).val() == "Input" ){

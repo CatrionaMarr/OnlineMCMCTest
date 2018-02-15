@@ -31,6 +31,7 @@
 </head>
 
 <body>
+
 <!-- site data tracking -->
 <?php include_once("analyticstracking.php") ?>
 
@@ -38,7 +39,20 @@
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $resdir = 'results';
+// ################################################################# CATS TEST AREA #######################################################
   
+  if (!empty($_POST["catstestfile"])) {
+    $outdir = $resdir.'/'.filter_var($_POST["outdir"], FILTER_SANITIZE_STRING);
+    if(!file_exists($outdir)){
+      mkdir($outdir, 0777, true);
+    }
+
+    $catstestfile = $_POST["catstestfile"];
+    // output data to file
+    file_put_contents($outdir.'/catstestfile.txt', $catstestfile);
+  }
+
+// ################################################################# CATS TEST AREA #######################################################
   if (!empty($_POST["pyfile"])) {
     $outdir = $resdir.'/'.filter_var($_POST["outdir"], FILTER_SANITIZE_STRING);
     $_SESSION["outdir"] = $outdir;
@@ -217,8 +231,21 @@ On this website you can input a model function defined by a set of parameters in
       $('[data-toggle="tooltip"]').tooltip();    
   });
   </script> <!-- script for tooltips -->
-
-  <div>
+  
+    Which sampler would you like to use?
+    <br>
+    <div class="col-lg-4">
+      <select id="sampler_type" class="form-control">
+        <option value="">--Sampler--</option>
+        <option value="emcee">emcee</option>
+        <option value="PyMC3">PyMC3</option>
+        <option value="CPNest">CPNest</option>
+      </select>
+    </div>
+    <br>
+    <br>
+  
+    <div>
     Input <a style="color: #BD5D38" href="#themodel">model</a> equation: <span data-toggle="tooltip" data-placement="right" title="Input the model that you want to fit to your data, eg. m*x." class="glyphicon glyphicon-question-sign"></span>
     <br>
       <div class="col-lg-4">
