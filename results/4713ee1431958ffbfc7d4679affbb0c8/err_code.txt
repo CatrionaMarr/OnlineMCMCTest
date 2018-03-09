@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "./pyfile.py", line 131, in <module>
+    errorpage(errval, "fanatapan@gmail.com", "http://localhost/results/4713ee1431958ffbfc7d4679affbb0c8")
+  File "/usr/local/lib/python2.7/dist-packages/theonlinemcmc/errorpage.py", line 36, in errorpage
+    emailresponse(emailaddress, outdir, runerror=True)
+  File "/usr/local/lib/python2.7/dist-packages/theonlinemcmc/emailresponse.py", line 58, in emailresponse
+    server.login(username, password)
+  File "/usr/lib/python2.7/smtplib.py", line 622, in login
+    raise SMTPAuthenticationError(code, resp)
+smtplib.SMTPAuthenticationError: (534, '5.7.14 <https://accounts.google.com/signin/continue?sarp=1&scc=1&plt=AKgnsbuA\n5.7.14 CT5AZy82ckNPHBh6V7-XJbS0FexS485PVdPUYNbjYvvP2wtHud-mPkwGHxiFH2gyHgcLaD\n5.7.14 dXw_b5Lbhhj--D5HgiT44C_U5oPFgSFg6t_wzpgbjLuNllecMLWyCfY4or_hgPbi3A82-4\n5.7.14 o9rHWJjwvsrmqXz1JO1OBZCQPPIkbjYnW9iiQFkSvjY0Ko-boHNFDmNigvAd-PRvCmojoq\n5.7.14 XLaAS7-Lm6Ud7Krr-HealabyvfgYY> Please log in via your web browser and\n5.7.14 then try again.\n5.7.14  Learn more at\n5.7.14  https://support.google.com/mail/answer/78754 u33sm4078354wrc.83 - gsmtp')

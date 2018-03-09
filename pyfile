@@ -1,0 +1,34 @@
+pyfile = "\
+"#!/usr/bin/env python\n\n\
+\
+# import required packages\n\
+import emcee\n\
+import numpy as np\n\
+from numpy import exp, log\n\
+\n\
+# import model function from separate file\n\
+from mymodel import mymodel\n\
+\n\
+# import post-processing function from theonlinemcmc package\n\
+from theonlinemcmc import *\n\
+\n\
+# initialise error code value\n\
+errval = 0\n\
+\n\
+#MCMCWrapper args\n\
+sample = MCMCWrapper({wrapper_data}, {theta}, {variables}, {sampler_type})
+
+
+
+var postprocess2 = "  # run post-processing script\n";
+    postprocess2 += "  try:\n";
+    postprocess2 += "    MCMCWrapper(wrapper_data, \"" + theta "\", " + variables + ", \"" + sampler_type + "\")\n";
+    outputStrings['postprocess2'] = postprocess2;
+    
+    var database = "# submit some information to a database\n";
+    database = "database_add_row(\"" + outdir + "\", \"" + modelStrings['outputstring'] + "\", \"" + theta.join(',') + "\", " + (theta.length).toString() + ", success)\n\n";
+
+    outputStrings['database'] = database;
+    outputdata['theta'] = theta; // ------------------------------------------------------------------------------------------CAT THIS THETA-----------------------------------------------------------------------------------
+
+    outputdata['pyfile'] = pyfile.format(outputStrings);

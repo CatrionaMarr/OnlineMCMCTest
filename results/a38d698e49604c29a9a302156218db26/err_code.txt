@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "./pyfile.py", line 19, in <module>
+    runitem.run_mcmc()
+TypeError: run_mcmc() takes no arguments (1 given)

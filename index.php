@@ -39,6 +39,7 @@
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $resdir = 'results';
+  /*
 // ################################################################# CATS TEST AREA #######################################################
   
   if (!empty($_POST["catstestfile"])) {
@@ -53,6 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   }
 
 // ################################################################# CATS TEST AREA #######################################################
+*/
   if (!empty($_POST["pyfile"])) {
     $outdir = $resdir.'/'.filter_var($_POST["outdir"], FILTER_SANITIZE_STRING);
     $_SESSION["outdir"] = $outdir;

@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "./pyfile.py", line 12, in <module>
+    from theonlinemcmc import *
+  File "/usr/local/lib/python2.7/dist-packages/theonlinemcmc/__init__.py", line 6, in <module>
+    from MCMCWrapper import *
+  File "/usr/local/lib/python2.7/dist-packages/theonlinemcmc/MCMCWrapper.py", line 27
+    
+    ^
+IndentationError: expected an indented block

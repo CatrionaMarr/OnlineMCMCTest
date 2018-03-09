@@ -1,0 +1,4 @@
+  File "./pyfile.py", line 18
+    runitem = MCMCWrapper(try:
+                            ^
+SyntaxError: invalid syntax

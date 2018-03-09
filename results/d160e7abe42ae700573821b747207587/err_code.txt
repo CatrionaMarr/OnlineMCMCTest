@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "./pyfile.py", line 15, in <module>
+    from theonlinemcmc import MCMCWrapper
+  File "/usr/local/lib/python2.7/dist-packages/theonlinemcmc/MCMCWrapper.py", line 68
+    abscissastringquotes = "'%s'"abscissastring
+                                              ^
+SyntaxError: invalid syntax

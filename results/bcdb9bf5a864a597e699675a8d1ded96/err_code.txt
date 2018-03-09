@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "./pyfile.py", line 20, in <module>
+    runitem.run_postproc()
+  File "/usr/local/lib/python2.7/dist-packages/theonlinemcmc/MCMCWrapper.py", line 191, in run_postproc
+    errorpage(self.errval, self.emailaddress, resultsaddress)
+NameError: global name 'resultsaddress' is not defined

@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "./pyfile.py", line 18, in <module>
+    runitem = MCMCWrapper('emcee', 'm,c', 'x', '{"m":{"priortype":"Uniform","minval":"-10","maxval":"10","meanval":0,"sigmaval":0},"c":{"priortype":"Uniform","minval":"-1","maxval":"1","meanval":0,"sigmaval":0}}', 1000, 1000, 100, 2, 'fanatapan@yahoo.co.uk', '28b6a5b128b368672be6ea72c89e20f4', 'm*x+c', 'x, 0.65,')
+  File "/usr/local/lib/python2.7/dist-packages/theonlinemcmc/MCMCWrapper.py", line 41, in __init__
+    write("print 1")
+NameError: global name 'write' is not defined

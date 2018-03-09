@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "./pyfile.py", line 20, in <module>
+    runitem.run_postproc()
+  File "/usr/local/lib/python2.7/dist-packages/theonlinemcmc/MCMCWrapper.py", line 194, in run_postproc
+    database_add_row(outdir, self.modelStrings, theta, len(theta), success)
+NameError: global name 'outdir' is not defined

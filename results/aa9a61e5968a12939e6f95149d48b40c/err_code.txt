@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "./pyfile.py", line 15, in <module>
+    from theonlinemcmc import MCMCWrapper
+  File "/usr/local/lib/python2.7/dist-packages/theonlinemcmc/MCMCWrapper.py", line 17, in <module>
+    class MCMCWrapper(object): # fix arg names before running idiot
+  File "/usr/local/lib/python2.7/dist-packages/theonlinemcmc/MCMCWrapper.py", line 36, in MCMCWrapper
+    for name in self.theta:
+NameError: name 'self' is not defined

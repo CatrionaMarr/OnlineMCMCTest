@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/dist-packages/emcee/ensemble.py", line 519, in __call__
+    return self.f(x, *self.args, **self.kwargs)
+  File "./pyfile.py", line 23, in lnprob
+    return lp + lnlike(theta, x, data)
+  File "./pyfile.py", line 48, in lnlike
+    return -0.5*np.sum(((md - data)/sigma_gauss)**2)
+NameError: global name 'sigma_gauss' is not defined
+emcee: Exception while calling your likelihood function:
+  params: [-3.2466537   0.59104525]
+  args: (array([ 1.,  2.,  3.,  4.]), array([ 1.,  2.,  3.,  4.]))
+  kwargs: {}
+  exception:

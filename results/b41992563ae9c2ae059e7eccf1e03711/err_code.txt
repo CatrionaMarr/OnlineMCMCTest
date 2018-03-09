@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "./pyfile.py", line 18, in <module>
+    sample = MCMCWrapper({wrapper_data}, {theta}, {variables}, {sampler_type})
+NameError: name 'MCMCWrapper' is not defined

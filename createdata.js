@@ -397,13 +397,13 @@ $(document).ready(function() {
 
     });
   }
-
+var errval = "";
   // form submission
   $("#id_submit_variables").click(function(){
     pyfile = ""; // clear global variable    
-
+    
     // create python file for submission (use format function defined at the start of the code)
-    pyfile = "\
+   /* pyfile = "\
 #!/usr/bin/env python\n\n\
 \
 # import required packages\n\
@@ -449,8 +449,33 @@ errval = 0\n\
 {postprocess}\
 {database}\
 \n\
-";
-    
+";*/
+
+
+
+pyfile = "\
+#!/usr/bin/env python\n\n\
+\
+# import required packages\n\
+import emcee\n\
+import numpy as np\n\
+from numpy import exp, log\n\
+\n\
+# import model function from separate file\n\
+from mymodel import mymodel\n\
+\n\
+# import post-processing function from theonlinemcmc package\n\
+from theonlinemcmc import *\n\
+\n\
+#import the wrapper class\n\
+from theonlinemcmc import MCMCWrapper\n\
+\n\
+#run the mcmc\n\
+runitem = MCMCWrapper({sampler_type}, {theta}, {abscissastring}, {three}, {Nmcmc}, {Nburnin}, {Nens}, {ndim}, {emailaddress}, {outdir}, {outputstring}, {argslist})\n\
+runitem.run_mcmc()\n\
+runitem.run_postproc()\n\
+\n\
+";  
     var outputStrings = {}; // object to pass to formatter
     
     var theta = []; // array for unpacking variables that require fitting
@@ -481,9 +506,12 @@ errval = 0\n\
           if ( minmaxvals.length == 0 ){
             return false; // there has been a problem
           }
-        
+
+var outputdata = {};
           fitarray[variables[index]].minval = minmaxvals[0];
           fitarray[variables[index]].maxval = minmaxvals[1];
+                    outputdata['minmaxvals'] = minmaxvals;
+          outputdata['variables[index]'] = variables[index];
         }
 
         if ( priortype == "Gaussian" ){
@@ -519,7 +547,7 @@ errval = 0\n\
       var idpriortype = "#sigma_gauss_prior";
       var priortype = $(idpriortype).val();
 
-      variables.push("sigma_gauss"); // add sigma_gauss (parameter for fitting sigma) to variables array
+      variables.push(""); // add sigma_gauss (parameter for fitting sigma) to variables array
       theta.push("sigma_gauss");
 
       fitarray["sigma_gauss"] = {priortype: "", minval: "", maxval: "", meanval: "", sigmaval: ""}; // object is an object that will contain prior info
@@ -574,13 +602,20 @@ var outdir = guuid();
 // object to output the data
 var outputdata = {};
 outputdata['outdir'] = outdir;
-var catstestfile = "catstestfile.txt"
-var sampler_type = $("#sampler_type").val();
+outputStrings["outdir"] = "'" + outdir + "'";
+//var catstestfile = "catstestfile.txt"
+
+var sampler_type = "'" + $("#sampler_type").val() + "'";
+outputdata['sampler_type'] = sampler_type;
+outputStrings["sampler_type"] = sampler_type;
+
 var likelihood_input_type = $("#likelihood_input_type").val();
-var 
+outputdata['likelihood_input_type'] = likelihood_input_type;
+outputdata['variables'] = variables;
+//input_data and datafile is data set
 
 // create python file for submission (use format function defined at the start of the code)
-outputdata['catstestfile'] = sampler_type.format(sampler_type);
+//outputdata['catstestfile'] = sampler_type.format(sampler_type);
  
 //-----------------------------------------------------------------------------------------------------------------------------------------
 //----------------------------------------------------------CATS TEST AREA-----------------------------------------------------------------
@@ -659,14 +694,17 @@ def mymodel({arguments}):\n\
     modelStrings['arguments'] = thetanosigma.join() + ", " + abscissastring;
     modelStrings['conststring'] = conststring; // include constant values
     modelStrings['outputstring'] = modeleq.replace(/[ \t\n\r]+/, ""); // add model equation
-
+    var outputstring = "'" + modelStrings['outputstring'] + "'";
+    outputStrings['outputstring'] = outputstring;
+    outputStrings['conststring'] = conststring;
     var gauss_like_sigma = "";
     if ( $("#likelihood_input_type").val() == "Gaussian" ){
       if ( $("#id_gauss_like_type").val().search("Known") != -1 ){
         gauss_like_sigma += ", sigma_gauss";
       }
     }
-
+    outputdata['gauss_like_sigma'] = gauss_like_sigma;
+    outputStrings["gauss_like_sigma"] = gauss_like_sigma;
     // create log posterior function
     var posteriorfunction = "def lnprob(theta, " + abscissastring + gauss_like_sigma;   
     posteriorfunction += ", data):\n  lp = lnprior(theta)\n\
@@ -681,25 +719,64 @@ def mymodel({arguments}):\n\
     priorfunction += "  lp = 0.\n";
     priorfunction += "  " + theta.join() + " = theta\n\n"; // unpack variables 
 
+    var finalfa = "";
     // initial points for MCMC
     var initialpoint = "try:\n";
-    
+    //-----------------------------------CAT add in these ifs to the MCMCWrapper py file --------------------------------------------------------------------
     // loop through fit array object
     for ( var priorvar in fitarray ){
-      var priortype = fitarray[priorvar].priortype;
+        var priortype = fitarray[priorvar].priortype;
+        outputdata['fitarray'] = fitarray;
+        outputStrings["fitarray"] = fitarray;
+        finalfa += fitarray[priorvar] + ",";
 
+        /*outputdata['priortype'] = priortype;
+    	outputdata['fitarray[1]'] = fitarray[1];
+    	outputdata['fitarray[2]'] = fitarray[2];
+    	outputdata['fitarray[3]'] = fitarray[3];
+    	outputdata['fitarray[1][priortype]'] = fitarray[1].priortype;
+    	outputdata['fitarray[1][minval]'] = fitarray[1].minval;
+    	outputdata['fitarray[1][maxval]'] = fitarray[1].maxval;
+    	outputdata['fitarray[1][meanval]'] = fitarray[1].meanval;
+    	outputdata['fitarray[1][sigmaval]'] = fitarray[1].sigmaval;*/
+    	$.each(fitarray, function(i, j){
+    		var one = fitarray[i].priortype;
+    		var two = fitarray;
+    		var pname = i;
+
+    		var three = JSON.stringify(two);
+    		var four = i + ":" + three;
+    		outputdata['pname'] = pname;
+    		outputdata['one'] = one;
+			outputdata['two'] = two;
+			outputdata['three'] = three;
+			outputdata['four'] = four;
+			outputStrings['three'] = "'" + three + "'";
+    	});
+
+    	$.each(fitarray, function(key,value) {
+
+    	});
+    	
       if ( priortype == "Uniform" || priortype == "LogUniform" ){
         priorfunction += "  if ";
+
         
         if ( priortype == "Uniform" ){
           priorfunction += fitarray[priorvar].minval.toString() + " < " + priorvar + " < " + fitarray[priorvar].maxval.toString() + ":\n";
           priorfunction += "    lp = 0.\n";
+          var fitarraytest = fitarray[priorvar].minval.toString();
+          outputdata['fitarraytest'] = fitarraytest;
           initialpoint += "  " + priorvar + "ini = " + fitarray[priorvar].minval.toString() + " + np.random.rand(Nens)*" + (fitarray[priorvar].maxval - fitarray[priorvar].minval).toString() + "\n";
+          outputdata['initialpoint'] = initialpoint;
+          outputStrings['initialpoint'] = initialpoint;
         }
         if ( priortype == "LogUniform" ){ // work in log space
           priorfunction += "log(" + fitarray[priorvar].minval.toString() + ") < " + priorvar + " < log(" + fitarray[priorvar].maxval.toString() + "):\n";
           priorfunction += "    lp = 0.\n";
           initialpoint += "  " + priorvar + "ini = " + "log(" + fitarray[priorvar].minval + ") + np.random.rand(Nens)*(" + "log(" + fitarray[priorvar].maxval.toString() +") - log(" + fitarray[priorvar].minval.toString() + "))\n";
+		  outputdata['initialpoint'] = initialpoint;
+		  outputStrings['initialpoint'] = initialpoint;        
         }
 
         priorfunction += "  else:\n    return -np.inf\n\n";
@@ -708,16 +785,20 @@ def mymodel({arguments}):\n\
       if ( priortype == "Gaussian" ){
         priorfunction += "  lp -= 0.5*(" + priorvar + " - " + fitarray[priorvar].meanval.toString() + ")**2/" + fitarray[priorvar].sigmaval.toString() + "**2" + "\n\n";
         initialpoint += "  " + priorvar + "ini = " + fitarray[priorvar].meanval.toString() + " + np.random.randn(Nens)*" + fitarray[priorvar].sigmaval.toString() + "\n";
+        outputdata['initialpoint'] = initialpoint;
+        outputStrings['initialpoint'] = initialpoint;
       }
 
       if ( priortype == "Exponential" ){
         priorfunction += "  lp -= " + priorvar + "/" + fitarray[priorvar].meanval.toString() + "\n\n";
         initialpoint += "  " + priorvar + "ini = np.random.exponential(" + fitarray[priorvar].meanval.toString() + ", Nens)\n";
+        outputdata['initialpoint'] = initialpoint;
+        outputStrings['initialpoint'] = initialpoint;
       }
       
       // maybe have other prior type (exponential?) (plus hyperparameters?)
     }
-
+  
     // add condition in prior (should check that the condition actually contains the given variables)
     var conditions = $("#id_conditions").val();
     if ( conditions != "Conditions (e.g. x < 0 && y > z)" ){ // the default value
@@ -732,6 +813,7 @@ def mymodel({arguments}):\n\
     // create log likelihood function
     var likefunction = "def lnlike(theta, " + abscissastring + gauss_like_sigma + ", data):\n";
     likefunction += "  " + theta.join() + " = theta\n"; // unpack theta
+    outputdata['theta.join()'] = theta.join();
     // exponentiate any log uniform prior values before inputting into model
     for ( var priorvar in fitarray ){
       var priortype = fitarray[priorvar].priortype;
@@ -797,17 +879,18 @@ def mymodel({arguments}):\n\
           return false;
         }
       }
-      outputdata['input_data'] = input_data.join(' ');
+      outputdata['input_data'] = input_data.join(' '); // --------------------CAT THIS IS THE DATA BIT-------------------------------------
+   	  var wrapper_data = outputdata['input_data'];
     }
 
     // upload abscissa data
     var inputformData = new FormData();
-    if( $("#data_input_type").val() == "Upload" ){
+    if( $("#data_input_type").val() == "Upload" ){ // ------------------------SO IS THIS BIT ----------------------------------------------
       var dtfile = $(data_form_id)[0].files[0];
       inputformData.append('file', dtfile);
       inputformData.append('labeldt', 'datafile');
       inputformData.append('outdirdt', outdir);
-
+      var wrapper_data = readdata;
       // have file size limit of 500kb
       if ( dtfile.size/1024.0 > 500 ){
         alert("Data file size is too large");
@@ -880,11 +963,20 @@ def mymodel({arguments}):\n\
       alert("Number of burn-in iterations is not a number");
       return false;
     }
-    
+    // CAT THIS IS IMPORTANT
     var setnmcmc = "Nmcmc = " + niter.toString() + "\nNburnin = " + nburn.toString() + "\nNens = " + nens.toString() + "\n";
     setnmcmc += "ndim = " + theta.length.toString() + "\n";
+    var Nmcmc = niter.toString();
+    var Nburnin = nburn.toString();
+    var Nens = nens.toString();
+    var ndim = theta.length.toString();
 
     outputStrings['setnmcmc'] = setnmcmc;
+    outputStrings["Nmcmc"] = Nmcmc;
+    outputStrings["Nburnin"] = Nburnin;
+    outputStrings["Nens"] = Nens;
+    outputStrings["ndim"] = ndim;
+
     
     // set up initial points from prior
     initialpoint += "  pos = np.array([";
@@ -895,11 +987,11 @@ def mymodel({arguments}):\n\
     initialpoint += "]).T\n";
     initialpoint += "except:\n";
     initialpoint += "  errval = PRIOR_INIT_ERR\n";
-    
+    errval = 'PRIOR_INIT_ERR';
     outputStrings['initialpoint'] = initialpoint;
     
     // read in data
-    var readdata = 'if errval == 0:\n';
+    var readdata = 'if errval == 0:\n'; // -------------------- CAT this might be needed to read in the data --------------------
     readdata += '  try:\n';
     readdata += '    data = np.loadtxt("' + datafile +'")\n';
     readdata += '  except:\n';
@@ -907,7 +999,7 @@ def mymodel({arguments}):\n\
     readdata += '      data = np.loadtxt("' + datafile + '", delimiter=",")\n';
     readdata += '    except:\n';
     readdata += '      errval = DATA_READ_ERR\n\n';
-    
+    errval = 'DATA_READ_ERR';
     outputStrings['readdata'] = readdata;
     
     // read in abscissa
@@ -919,7 +1011,7 @@ def mymodel({arguments}):\n\
     readabscissa += '      ' + abscissavar + ' = np.loadtxt("' + absfile + '", delimiter=",")\n';
     readabscissa += '    except:\n';
     readabscissa += '      errval = ABSCISSA_READ_ERR\n\n';
-    
+    errval = 'ABSCISSA_READ_ERR';
     outputStrings['readabscissa'] = readabscissa;
     
     // read in or set sigma values (for Gaussian likelihood)
@@ -952,13 +1044,16 @@ def mymodel({arguments}):\n\
         readsigma += '    sigma_data = np.loadtxt("' + sigmafile + '")\n';
         readsigma += '    if len(sigma_data) != len(data):\n';
         readsigma += '      errval = DATA_LENGTH_ERR\n';
+        errval = 'DATA_LENGTH_ERR';
         readsigma += '  except:\n';
         readsigma += '    try:\n';
         readsigma += '      sigma_data = np.loadtxt("' + sigmafile + '", delimiter=",")\n';
         readsigma += '      if len(sigma_data) != len(data):\n';
         readsigma += '        errval = DATA_LENGTH_ERR\n';
+        errval = 'DATA_LENGTH_ERR';
         readsigma += '    except:\n';
         readsigma += '      errval = SIGMA_READ_ERR\n\n';
+        errval = 'SIGMA_READ_ERR';
         sigmavar += "sigma_data";
 
         sigmavar += ",";
@@ -971,18 +1066,18 @@ def mymodel({arguments}):\n\
     // check length of data and abscissa are the same
     runmcmc += "  if len(data) != len(" + abscissavar + "):\n";
     runmcmc += "    errval = DATA_LENGTH_ERR\n\n";
-    
+    errval = 'DATA_LENGTH_ERR';
     // set MCMC to run
     var argslist = "  argslist = (" + abscissavar + ", " + sigmavar + " data)\n";
     runmcmc += argslist;
-    
+    outputStrings["argslist"] = "'" + abscissavar + ", " + sigmavar + "'";
     runmcmc += "\nif errval == 0:\n";
     runmcmc += "  # set up sampler\n";
     runmcmc += "  try:\n";
     runmcmc += "    sampler = emcee.EnsembleSampler(Nens, ndim, lnprob, args=argslist)\n"
     runmcmc += "  except:\n";
     runmcmc += "    errval = MCMC_INIT_ERR\n\n";
-    
+    errval = 'MCMC_INIT_ERR';
     runmcmc += "  # run sampler\n";
     runmcmc += "  try:\n";
     runmcmc += "    sampler.run_mcmc(pos, Nmcmc+Nburnin)\n";
@@ -1000,10 +1095,21 @@ def mymodel({arguments}):\n\
       }
       count++;
     }
+    
+
+    for ( var i in fitarray){
+    	var newfitarray = fitarray[i];
+    	var newfitarraymax = fitarray[i].maxval;
+    } 
+
+    outputdata['newfitarray'] = newfitarray;
+    outputdata['newfitarraymax'] = newfitarraymax;
+    outputStrings['newfitarray'] = newfitarray;
+    outputStrings['newfitarraymax'] = newfitarraymax;
 
     runmcmc += "  except:\n";
     runmcmc += "    errval = MCMC_RUN_ERR\n\n";
-
+    errval = 'MCMC_RUN_ERR';
     // output chain and log probabilities to gzipped file
     runmcmc += "  # output the posterior samples, likelihood and variables\n";
     runmcmc += "  try:\n";
@@ -1013,16 +1119,17 @@ def mymodel({arguments}):\n\
     runmcmc += "    fv.close()\n";
     runmcmc += "  except:\n";
     runmcmc += "    errval = POST_OUTPUT_ERR\n\n";
-    
+    errval = 'POST_OUTPUT_ERR';
     outputStrings['runmcmc'] = runmcmc;
     
     var emailaddress = $("#id_email").val();
     emailaddress = emailaddress.replace(/['"]+/g, ''); // remove any quotes (" or ') in the string (hopefully this helps against insertion)
+    outputStrings["emailaddress"] = "'" + emailaddress + "'";
     if( emailaddress.search('@') == -1 ){
       alert("Email address is not valid");
       return false;
     }
-    
+    // ----------------------------------------------- CAT use this to parse MCMCWrapper -----------------------------------------------------------------------------------------------------------
     // run a pre-written script to parse the output, create plots and an output webpage and email user
     var hrefloc = window.location.href;
     var lIndex = hrefloc.lastIndexOf('/'); // strip the current page off the href
@@ -1031,7 +1138,7 @@ def mymodel({arguments}):\n\
     postprocess += "    postprocessing(samples, \"" + theta.join(',') + "\", " + abscissavar + ", \"" + abscissavar + "\", data, \"" + emailaddress + "\", \"" + hrefloc.substr(0, lIndex) + "/results/" + outdir + "\")\n";
     postprocess += "  except:\n";
     postprocess += "    errval = POST_PROCESS_ERR\n\n";
-    
+    errval = 'POST_PROCESS_ERR';
     postprocess += "success = True\n";
     postprocess += "if errval != 0:\n";
     postprocess += "  # run different script in case error codes are encountered\n";
@@ -1040,11 +1147,25 @@ def mymodel({arguments}):\n\
     
     outputStrings['postprocess'] = postprocess;
     
+//define args then pass them as a string not as their actual values 
+    //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    var postprocess2 = "  # run post-processing script\n";
+    postprocess2 += "  try:\n";
+    postprocess2 += "    MCMCWrapper(" + wrapper_data + ", \"" + theta + "\", " + variables + ", \"" + sampler_type + "\")\n";
+    outputStrings['postprocess2'] = postprocess2;
+    outputdata['abscissastring'] = abscissastring;
+    outputStrings["abscissastring"] = "'" + abscissastring + "'";
+    outputdata['variables'] = variables;
+    //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
     var database = "# submit some information to a database\n";
     database = "database_add_row(\"" + outdir + "\", \"" + modelStrings['outputstring'] + "\", \"" + theta.join(',') + "\", " + (theta.length).toString() + ", success)\n\n";
 
     outputStrings['database'] = database;
-    
+    outputdata['theta'] = theta; // ------------------------------------------------------------------------------------------CAT THIS THETA-----------------------------------------------------------------------------------
+    outputStrings['theta'] = "'" + theta + "'";
+    outputdata['modelStrings'] = modelStrings;
     outputdata['pyfile'] = pyfile.format(outputStrings); // the python file
     outputdata['modelfile'] = modelfunction.format(modelStrings); // the python file containing the model function
 
@@ -1101,7 +1222,39 @@ def mymodel({arguments}):\n\
     //    outputdata['pageimage'] = canvasData;
     //  }
     //});
+    /*
+var finalfa = "";
+for (i = 0; i < fitarray.length; i++) {
+	finalfa += fitarray[i][priortype];
+	finalfa += fitarray[i][minval];
+	finalfa += fitarray[i][maxval];
+	finalfa += fitarray[i][meanval];
+	finalfa += fitarray[i][sigmaval];
+}
+*/
 
+var stringifys = JSON.stringify(finalfa);
+outputdata['stringifys'] = stringifys;
+var mapfinalfa = $.makeArray(finalfa);
+outputdata['mapfinalfa'] = mapfinalfa;
+outputdata['finalfa'] = finalfa;
+var fitarraystring = fitarray.toString();
+outputdata['fitarraystring'] = fitarraystring;
+var varindex = fitarray[variables[index]];
+outputdata['varindex'] = varindex;
+outputdata['posteriorfunction'] = posteriorfunction;
+outputdata['priorfunction'] = priorfunction;
+outputdata['likefunction'] = likefunction;
+outputdata['setnmcmc'] = setnmcmc;
+outputdata['initialpoint'] = initialpoint;
+outputdata['readdata'] = readdata;
+outputdata['readabscissa'] = readabscissa;
+outputdata['readsigma'] = readsigma;
+outputdata['runmcmc'] = runmcmc;
+outputdata['postprocess'] = postprocess;
+outputdata['database'] = database;
+    outputdata['errval'] = errval;
+    outputStrings['errval'] = errval;
     outputdata['runcode'] = 1; // if this is set run the code
     
     // submit final data (python file and any inputs)

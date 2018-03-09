@@ -1,0 +1,4 @@
+  File "./pyfile.py", line 19
+    runitem = MCMCWrapper({fitarraystring}, emcee, m,c, x, , sigma_gauss, [object Object], 1000, 1000, 100, 2, {errval}, fanatapan@yahoo.co.uk, 72e2b356ba235badc27590b812ed92ce, {modelStrings},   argslist = (x, 0.65, data)
+                                                           ^
+SyntaxError: invalid syntax

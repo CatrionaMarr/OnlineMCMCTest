@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "./pyfile.py", line 18, in <module>
+    runitem = MCMCWrapper('emcee', 'm,c', 'x', '{"m":{"priortype":"Uniform","minval":"-10","maxval":"10","meanval":0,"sigmaval":0},"c":{"priortype":"Uniform","minval":"-1","maxval":"1","meanval":0,"sigmaval":0}}', 1000, 1000, 100, 2, 'fanatapan@yahoo.co.uk', 'a8a9b7e06e288ac7e24d565974b8f3f1', 'm*x+c', 'x, 0.65,')
+  File "/usr/local/lib/python2.7/dist-packages/theonlinemcmc/MCMCWrapper.py", line 40, in __init__
+    logfile = open("../logfile.txt","w")
+IOError: [Errno 13] Permission denied: '../logfile.txt'

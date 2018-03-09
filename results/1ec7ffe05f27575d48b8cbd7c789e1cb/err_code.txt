@@ -1,0 +1,4 @@
+  File "./pyfile.py", line 18
+    runitem = MCMCWrapper(emcee, 'm,c', x, '{"m":{"priortype":"Uniform","minval":"-1","maxval":"1","meanval":0,"sigmaval":0},"c":{"priortype":"Uniform","minval":"-10","maxval":"10","meanval":0,"sigmaval":0}}', 1000, 1000, 100, 2, fanatapan@yahoo.co.uk, 1ec7ffe05f27575d48b8cbd7c789e1cb, 'm*x+c', 'x, 0.65,')
+                                                                                                                                                                                                                                               ^
+SyntaxError: invalid syntax

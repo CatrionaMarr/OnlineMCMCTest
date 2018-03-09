@@ -1,0 +1,4 @@
+  File "./pyfile.py", line 21
+    wrapper_data = {wrapper_data}theta = {theta}variables = {variables}sampler_type = {sampler_type}
+                                     ^
+SyntaxError: invalid syntax

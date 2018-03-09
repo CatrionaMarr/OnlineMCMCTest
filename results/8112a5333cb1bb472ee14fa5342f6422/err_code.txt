@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "./pyfile.py", line 131, in <module>
+    errorpage(errval, "you@example.com", "http://localhost/results/8112a5333cb1bb472ee14fa5342f6422")
+  File "/usr/local/lib/python2.7/dist-packages/theonlinemcmc/errorpage.py", line 78, in errorpage
+    emailresponse(emailaddress, outdir, runerror=True)
+  File "/usr/local/lib/python2.7/dist-packages/theonlinemcmc/emailresponse.py", line 56, in emailresponse
+    server = smtplib.SMTP(edata['server'],25)
+  File "/usr/lib/python2.7/smtplib.py", line 256, in __init__
+    (code, msg) = self.connect(host, port)
+  File "/usr/lib/python2.7/smtplib.py", line 316, in connect
+    self.sock = self._get_socket(host, port, self.timeout)
+  File "/usr/lib/python2.7/smtplib.py", line 291, in _get_socket
+    return socket.create_connection((host, port), timeout)
+  File "/usr/lib/python2.7/socket.py", line 575, in create_connection
+    raise err
+socket.error: [Errno 13] Permission denied
